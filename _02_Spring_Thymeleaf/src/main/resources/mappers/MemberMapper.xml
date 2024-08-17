@@ -71,4 +71,21 @@
                     TEL = #{tel}
                 WHERE ID = #{id}
     </update>
+
+    <select id="usernameCheck"
+            parameterType="string"
+            resultType="int">
+            SELECT COUNT(*)
+                FROM MEMBER
+                WHERE USERNAME = #{username}
+    </select>
+
+    <select id="nicknameCheck"
+            parameterType="string"
+            resultType="int">
+        SELECT COUNT(*)
+            FROM MEMBER
+            WHERE NICKNAME = #{nickname}
+    </select>
+
 </mapper>

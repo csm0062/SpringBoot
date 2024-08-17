@@ -3,6 +3,7 @@ package com.bit.springboard.service;
 import com.bit.springboard.dto.MemberDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MemberService {
     MemberDto save(MemberDto memberDto);
@@ -14,4 +15,8 @@ public interface MemberService {
     void remove(int id);
 
     MemberDto modify(MemberDto memberDto);
+
+    Map<String, String> usernameCheck(String username);
+
+    Map<String, String> nicknameCheck(String nickname);
 }

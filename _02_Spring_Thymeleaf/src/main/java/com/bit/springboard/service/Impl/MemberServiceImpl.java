@@ -6,7 +6,9 @@ import com.bit.springboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,35 @@ public class MemberServiceImpl implements MemberService {
     public MemberDto modify(MemberDto memberDto) {
         memberMapper.modify(memberDto);
         return memberMapper.findById(memberDto.getId());
+    }
+
+    @Override
+    public Map<String, String> usernameCheck(String username) {
+        Map<String, String> returnMap = new HashMap<>();
+
+        int usernameCheck = memberMapper.usernameCheck(username);
+
+        if(usernameCheck != 0) {
+            throw new RuntimeException("username duplicated");
+        }
+
+        returnMap.put("usernameCheckMsg", "usernameOk");
+
+        return returnMap;
+    }
+
+    @Override
+    public Map<String, String> nicknameCheck(String nickname) {
+       Map<String, String> returnMap = new HashMap<>();
+
+       int nicknameCheck = memberMapper.nicknameCheck(nickname);
+
+       if(nicknameCheck != 0) {
+           throw new RuntimeException("nickname duplicated");
+       }
+       returnMap.put("nicknameCheckMsg", "nicknameOk");
+
+       return returnMap;
     }
 
 

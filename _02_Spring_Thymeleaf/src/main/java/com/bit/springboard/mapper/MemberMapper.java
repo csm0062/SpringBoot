@@ -18,4 +18,8 @@ public interface MemberMapper {
     void remove(int id);
 
     void modify(MemberDto memberDto);
+
+    int usernameCheck(String username);
+
+    int nicknameCheck(String nickname);
 }
