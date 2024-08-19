@@ -88,4 +88,16 @@
             WHERE NICKNAME = #{nickname}
     </select>
 
+    <select id="findByIdAndPassword" parameterType="MemberDto" resultType="MemberDto">
+        SELECT ID
+             , USERNAME
+             , EMAIL
+             , NICKNAME
+             , TEL
+             , ROLE
+            FROM MEMBER
+            WHERE USERNAME = #{username}
+              AND PASSWORD = #{password}
+    </select>
+
 </mapper>
