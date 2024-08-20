@@ -46,38 +46,42 @@
             FROM MEMBER
     </select>
 
-    <select id="findById" parameterType="int" resultType="MemberDto">
+    <select id="findById"
+            parameterType="int"
+            resultType="MemberDto">
         SELECT ID
              , USERNAME
              , EMAIL
              , NICKNAME
              , TEL
              , ROLE
-        FROM MEMBER
-        WHERE ID = #{id}
+            FROM MEMBER
+            WHERE ID = #{id}
     </select>
 
-    <delete id="remove" parameterType="int">
+    <delete id="remove"
+            parameterType="int">
         DELETE FROM MEMBER
             WHERE ID = #{id}
     </delete>
 
-    <update id="modify" parameterType="MemberDto">
-            UPDATE MEMBER
-                SET
-                    PASSWORD = #{password},
-                    NICKNAME = #{nickname},
-                    EMAIL = #{email},
-                    TEL = #{tel}
-                WHERE ID = #{id}
+    <update id="modify"
+            parameterType="MemberDto">
+        UPDATE MEMBER
+            SET
+                PASSWORD = #{password},
+                NICKNAME = #{nickname},
+                EMAIL = #{email},
+                TEL = #{tel}
+            WHERE ID = #{id}
     </update>
-
+    
     <select id="usernameCheck"
             parameterType="string"
             resultType="int">
-            SELECT COUNT(*)
-                FROM MEMBER
-                WHERE USERNAME = #{username}
+        SELECT COUNT(*)
+            FROM MEMBER
+            WHERE USERNAME = #{username}
     </select>
 
     <select id="nicknameCheck"
@@ -88,7 +92,9 @@
             WHERE NICKNAME = #{nickname}
     </select>
 
-    <select id="findByIdAndPassword" parameterType="MemberDto" resultType="MemberDto">
+    <select id="findByIdAndPassword"
+            parameterType="MemberDto"
+            resultType="MemberDto">
         SELECT ID
              , USERNAME
              , EMAIL
@@ -99,5 +105,4 @@
             WHERE USERNAME = #{username}
               AND PASSWORD = #{password}
     </select>
-
 </mapper>

@@ -7,13 +7,12 @@
     <th:block layout:fragment="script">
         <script>
             $(() => {
-                let usernameCheck = false;
-                let nicknameCheck = false;
-                let passwordCheck = false;
-                let passwordConfirm = false;
+               let usernameCheck = false;
+               let nicknameCheck = false;
+               let passwordCheck = false;
+               let passwordConfirm = false;
 
-                // 아이디 중복 체크
-                $("#btn-username-check").on("click", (e) => {
+               $("#btn-username-check").on("click", (e) => {
                     if($("#username").val() === "") {
                         alert("아이디를 입력하세요.");
                         $("#username").focus();
@@ -21,137 +20,139 @@
                     }
 
                     $.ajax({
-                        url: '/member/username-check',
-                        type: 'post',
-                        data: $("#join-form").serialize(),
-                        success: (obj) => {
-                            // console.log(obj);
-                            if(obj.statusCode === 200) {
-                                if(confirm(`사용가능한 아이디 입니다. ${$("#username").val()}을 사용하시겠습니까?`)) {
-                                usernameCheck = true;
-                                $("#btn-username-check").attr("disabled", true);
-                                }
-                            }
-                        },
-                        error: (err) => {
-                            // console.log(err.responseJSON);
-                            if(err.responseJSON.statusCode === 601) {
-                                alert("중복된 아이디입니다.");
-                                usernameCheck = false;
-                                $("#username").focus();
-                                return;
-                            }
+                       url: '/member/username-check',
+                       type: 'post',
+                       data: $("#join-form").serialize(),
+                       success: (obj) => {
+                           // console.log(obj);
+                           if(obj.statusCode === 200) {
+                               if(confirm(`사용가능한 아이디입니다. ${$("#username").val()}을 사용하시겠습니까?`)) {
+                                   usernameCheck = true;
+                                   $("#btn-username-check").attr("disabled", true);
+                               }
+                           }
+                       },
+                       error: (err) => {
+                           // console.log(err.responseJSON);
+                           if(err.responseJSON.statusCode === 601) {
+                               alert("중복된 아이디입니다.");
+                               usernameCheck = false;
+                               $("#username").focus();
+                               return;
+                           }
 
-                            alert("알 수 없는 에러 발생. 관리자에게 문의하세요.")
-                        }
+                           alert("알 수 없는 에러 발생. 관리자에게 문의하세요.");
+                       }
                     });
 
-                    $("#username").on("change", (e) => {
-                        usernameCheck = false;
-                        $("#btn-username-check").attr("disabled", false);
-                    });
-                });
 
-                // 닉네임 중복 체크
-                $("#btn-nickname-check").on("click", (e) => {
-                    if($("#nickname").val() === "") {
-                        alert("닉네임을 입력하세요.")
-                        $("nickname").focus();
-                        return;
-                    }
+               });
 
-                    $.ajax({
-                        url: '/member/nickname-check',
-                        type: 'post',
-                        data: $("#join-form").serialize(),
-                        success: (obj) => {
-                            if(obj.statusCode === 200) {
-                                if(confirm(`사용가능한 닉네임 입니다. ${$("#nickname").val()}을 사용하시겠습니까?`)) {
-                                    nicknameCheck = true;
-                                    $("#btn-nickname-check").attr("disabled", true);
-                                }
-                            }
-                        },
-                        error: (err) => {
-                            console.log(err.responseJSON)
-                            if(err.responseJSON.statusCode === 602) {
-                                alert("중복된 닉네임 입니다.")
-                                nicknameCheck = false;
-                                $("#nickname").focus();
-                                return;
-                            }
+               $("#username").on("change", (e) => {
+                   usernameCheck = false;
+                   $("#btn-username-check").attr("disabled", false);
+               });
 
-                            alert("알 수 없는 에러 발생. 관리자에게 문의하세요.")
-                        }
-                    });
-                    $("nickname").on("change", (e) => {
-                        nicknameCheck = false;
-                        $("#btn-nickname-check").attr("disabled", true);
-                    });
-                });
+               $("#btn-nickname-check").on("click", (e) => {
+                   if($("#nickname").val() === "") {
+                       alert("닉네임을 입력하세요.");
+                       $("#nickname").focus();
+                       return;
+                   }
 
-                // 매개변수 받아주는거 잊지 말기!
-                const validatePassword = (password) => {
-                    return /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*+=-]).{9,}$/.test(password);
-                }
+                   $.ajax({
+                       url: '/member/nickname-check',
+                       type: 'post',
+                       data: $("#join-form").serialize(),
+                       success: (obj) => {
+                           if(obj.statusCode === 200) {
+                               if(confirm(`사용가능한 닉네임입니다. ${$("#nickname").val()}를 사용하시겠습니까?`)) {
+                                   nicknameCheck = true;
+                                   $("#btn-nickname-check").attr("disabled", true);
+                               }
+                           }
+                       },
+                       error: (err) => {
+                           if(err.responseJSON.statusCode === 602) {
+                               alert("중복된 닉네임입니다.");
+                               $("#nickname").focus();
+                               return;
+                           }
 
-                $("#password").on("change", (e) => {
-                    if(validatePassword(e.target.value)) {
-                        passwordCheck = true;
-                        $("#password-check").hide();
-                    } else {
-                        passwordCheck = false;
-                        $("#password-check").show();
-                    }
+                           alert("알 수 없는 에러발생. 관리자에게 문의하세요.");
+                       }
+                   })
+               });
 
-                    if(e.target.value === $("#password-confirm").val()) {
-                        passwordConfirm = true;
-                        $("#password-confirm-result").text("비밀번호가 일치합니다.");
-                        $("#password-confirm-result").css("color","green");
-                    } else {
-                        passwordConfirm = false;
-                        $("#password-confirm-result").text("비밀번호가 일치하지 않습니다.");
-                        $("#password-confirm-result").css("color","red");
-                    }
-                });
+               $("#nickname").on("change", (e) => {
+                  nicknameCheck = false;
+                  $("#btn-nickname-check").attr("disabled", false);
+               });
 
-                $("#password-confirm").on("change", (e) => {
-                    $("#password-confirm-result").show();
+               const validatePassword = (password) => {
+                   return /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*+=-]).{9,}$/.test(password);
+               }
 
-                    if(e.target.value === $("#password").val()) {
-                        passwordConfirm = true;
-                        $("#password-confirm-result").text("비밀번호가 일치합니다.");
-                        $("#password-confirm-result").css("color","green");
-                        return;
-                    }
+               $("#password").on("change", (e) => {
+                   if(validatePassword(e.target.value)) {
+                       passwordCheck = true;
+                       $("#password-check").hide();
+                   } else {
+                       passwordCheck = false;
+                       $("#password-check").show();
+                   }
 
-                    passwordConfirm = false;
-                    $("#password-confirm-result").text("비밀번호가 일치하지 않습니다.");
-                    $("#password-confirm-result").css("color","red");
-                });
+                   if(e.target.value === $("#password-confirm").val()) {
+                       passwordConfirm = true;
+                       $("#password-confirm-result").text("비밀번호가 일치합니다.");
+                       $("#password-confirm-result").css("color", "green");
+                   } else {
+                       passwordConfirm = false;
+                       $("#password-confirm-result").text("비밀번호가 일치하지 않습니다.");
+                       $("#password-confirm-result").css("color", "red");
+                   }
+               });
 
-                $("#join-form").on("submit",(e) => {
-                    if(!usernameCheck) {
-                        e.preventDefault();
-                        alert("아이디 중복체크를 진행하세요.")
-                        return;
-                    }
-                    if(!passwordCheck) {
-                        e.preventDefault();
-                        alert("비밀번호는 영문자, 숫자, 특수문자 조합의 9자리 이상으로 설정하세요.")
-                        return;
-                    }
-                    if(!passwordConfirm) {
-                        e.preventDefault();
-                        alert("비밀번호가 일치하지 않습니다.");
-                        return;
-                    }
-                    if(!nicknameCheck) {
-                        e.preventDefault();
-                        alert("닉네임 중복체크를 진행하세요.");
-                        return;
-                    }
-                });
+               $("#password-confirm").on("change", (e) => {
+                   $("#password-confirm-result").show();
+
+                   if(e.target.value === $("#password").val()) {
+                       passwordConfirm = true;
+                       $("#password-confirm-result").text("비밀번호가 일치합니다.");
+                       $("#password-confirm-result").css("color", "green");
+                       return;
+                   }
+
+                   passwordConfirm = false;
+                   $("#password-confirm-result").text("비밀번호가 일치하지 않습니다.");
+                   $("#password-confirm-result").css("color", "red");
+               });
+
+               $("#join-form").on("submit", (e) => {
+                   if(!usernameCheck) {
+                       e.preventDefault();
+                       alert("아이디 중복체크를 진행하세요.");
+                       return;
+                   }
+
+                   if(!passwordCheck) {
+                       e.preventDefault();
+                       alert("비밀번호는 영문자, 숫자, 특수문자 조합의 9자리 이상으로 설정하세요.");
+                       return;
+                   }
+
+                   if(!passwordConfirm) {
+                       e.preventDefault();
+                       alert("비밀번호가 일치하지 않습니다.");
+                       return;
+                   }
+
+                   if(!nicknameCheck) {
+                       e.preventDefault();
+                       alert("닉네임 중복체크를 진행하세요.");
+                       return;
+                   }
+               });
             });
         </script>
     </th:block>

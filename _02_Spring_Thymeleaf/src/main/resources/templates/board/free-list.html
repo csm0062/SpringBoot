@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{/layouts/layout2}">
+      layout:decorate="~{/layouts/layout1}">
 <body>
     <main layout:fragment="content">
         <div class="container mt-5 w-50">
@@ -11,7 +12,7 @@
             <form id="search-form" action="" method="post">
                 <div class="row">
                     <div class="col-3">
-                        <select class="form-select" name="search-condition">
+                        <select class="form-select" name="searchCondition">
                             <option value="all" selected>전체</option>
                             <option value="title">제목</option>
                             <option value="content">내용</option>
@@ -21,7 +22,7 @@
                     <div class="col-9">
                         <div class="row">
                             <div class="col-11">
-                                <input type="text" class="form-control w-100" name="search-keyword">
+                                <input type="text" class="form-control w-100" name="searchKeyword">
                             </div>
                             <div class="col-1 d-flex align-items-center">
                                 <i class="bi bi-search" id="search-icon"></i>
@@ -35,85 +36,25 @@
         <div class="container mt-3 mb-5 w-50">
             <table class="table table-hover text-center">
                 <thead>
-                <tr>
-                    <th>번호</th>
-                    <th>제목</th>
-                    <th>작성자</th>
-                    <th>등록일</th>
-                    <th>조회수</th>
-                </tr>
+                    <tr>
+                        <th>번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>등록일</th>
+                        <th>조회수</th>
+                    </tr>
                 </thead>
                 <tbody class="table-group-divider">
-                <tr class="board-tr">
-                    <td>1</td>
-                    <td>게시글1</td>
-                    <td>작성자1</td>
-                    <td>2024-06-25</td>
-                    <td>1</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>2</td>
-                    <td>게시글2</td>
-                    <td>작성자2</td>
-                    <td>2024-06-25</td>
-                    <td>2</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>3</td>
-                    <td>게시글3</td>
-                    <td>작성자3</td>
-                    <td>2024-06-25</td>
-                    <td>3</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
-                <tr class="board-tr">
-                    <td>4</td>
-                    <td>게시글4</td>
-                    <td>작성자4</td>
-                    <td>2024-06-25</td>
-                    <td>4</td>
-                </tr>
+                    <tr class="board-tr" th:each="free : ${freeList}">
+                        <td th:text="${free.id}"></td>
+                        <td>
+                            <a th:text="${free.title}"
+                                th:href="@{/boards/{id}?type=free (id=${free.id})}"></a>
+                        </td>
+                        <td th:text="${free.nickname}"></td>
+                        <td th:text="${#temporals.format(free.regdate, 'yyyy-MM-dd')}"></td>
+                        <td th:text="${free.cnt}"></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -147,6 +88,5 @@
             <button type="button" class="btn btn-outline-secondary" onclick="location.href='/boards/post'">글 등록</button>
         </div>
     </main>
-
 </body>
 </html>

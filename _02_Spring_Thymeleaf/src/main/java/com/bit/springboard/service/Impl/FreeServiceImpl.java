@@ -1,11 +1,10 @@
-package com.bit.springboard.service.Impl;
+package com.bit.springboard.service.impl;
 
 import com.bit.springboard.common.FileUtils;
 import com.bit.springboard.dto.BoardDto;
 import com.bit.springboard.dto.BoardFileDto;
 import com.bit.springboard.mapper.FreeMapper;
 import com.bit.springboard.service.BoardService;
-import groovy.transform.SourceURI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +33,7 @@ public class FreeServiceImpl implements BoardService {
         }
 
         freeMapper.post(boardDto);
+
         if(boardFileDtoList.size() > 0) {
             boardFileDtoList.forEach(boardFileDto -> boardFileDto.setBoard_id(boardDto.getId()));
             freeMapper.postFiles(boardFileDtoList);
@@ -41,4 +41,26 @@ public class FreeServiceImpl implements BoardService {
 
         return freeMapper.findById(boardDto.getId());
     }
+
+    @Override
+    public List<BoardDto> findAll() {
+        return freeMapper.findAll();
+    }
+
+    @Override
+    public BoardDto findById(int id) {
+        return freeMapper.findById(id);
+    }
+
+    @Override
+    public List<BoardFileDto> findFilesById(int id) {
+        return freeMapper.findFilesById(id);
+    }
+
+    @Override
+    public BoardDto modify(BoardDto boardDto, MultipartFile[] uploadFiles, MultipartFile[] changeFiles, String originFiles) {
+        return null;
+    }
+
+
 }

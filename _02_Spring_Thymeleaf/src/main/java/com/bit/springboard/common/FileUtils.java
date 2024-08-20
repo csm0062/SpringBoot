@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -22,33 +23,30 @@ import java.util.Date;
 import java.util.UUID;
 
 @Component
-// 파일을 서버에 업로드 하고 BoardFileDto 형태로 변환해서 리턴해주는 클래스
 public class FileUtils {
     private final AmazonS3 s3;
 
-    public FileUtils(NaverConfiguration NaverConfiguration) {
+    public FileUtils(NaverConfiguration naverConfiguration) {
         s3 = AmazonS3ClientBuilder.standard()
                 .withEndpointConfiguration(
-                        // EndPoint 설정
                         new AwsClientBuilder.EndpointConfiguration(
-                                NaverConfiguration.getEndPoint(),
-                                NaverConfiguration.getRegionName()
+                                naverConfiguration.getEndPoint(),
+                                naverConfiguration.getRegionName()
                         )
                 )
-        .withCredentials(
-                new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials(
-                                // 인증관련된 내용 설정
-                                NaverConfiguration.getAccessKey(),
-                                NaverConfiguration.getSecretKey()
+                .withCredentials(
+                        new AWSStaticCredentialsProvider(
+                                new BasicAWSCredentials(
+                                        naverConfiguration.getAccessKey(),
+                                        naverConfiguration.getSecretKey()
+                                )
                         )
                 )
-        )
-        .build();
+                .build();
     }
 
     public BoardFileDto parserFileInfo(MultipartFile multipartFile, String directory) {
-        String bucketName = "bitcamp-139";
+        String bucketName = "bitcamp-57";
 
         BoardFileDto boardFileDto = new BoardFileDto();
 
@@ -67,20 +65,18 @@ public class FileUtils {
         try(InputStream fileInputStream = multipartFile.getInputStream()) {
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentType(multipartFile.getContentType());
+
             PutObjectRequest putObjectRequest = new PutObjectRequest(
                     bucketName,
                     directory + fileName,
                     fileInputStream,
                     objectMetadata
-             //누구나 읽을 수 있게
             ).withCannedAcl(CannedAccessControlList.PublicRead);
 
             s3.putObject(putObjectRequest);
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
 
         File uploadFile = new File(directory + fileName);
         String type = "";

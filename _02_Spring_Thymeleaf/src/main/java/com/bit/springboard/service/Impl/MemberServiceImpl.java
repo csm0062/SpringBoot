@@ -1,4 +1,4 @@
-package com.bit.springboard.service.Impl;
+package com.bit.springboard.service.impl;
 
 import com.bit.springboard.dto.MemberDto;
 import com.bit.springboard.mapper.MemberMapper;
@@ -59,16 +59,17 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Map<String, String> nicknameCheck(String nickname) {
-       Map<String, String> returnMap = new HashMap<>();
+        Map<String, String> returnMap = new HashMap<>();
 
-       int nicknameCheck = memberMapper.nicknameCheck(nickname);
+        int nicknameCheck = memberMapper.nicknameCheck(nickname);
 
-       if(nicknameCheck != 0) {
-           throw new RuntimeException("nickname duplicated");
-       }
-       returnMap.put("nicknameCheckMsg", "nicknameOk");
+        if(nicknameCheck != 0) {
+            throw new RuntimeException("nickname duplicated");
+        }
 
-       return returnMap;
+        returnMap.put("nicknameCheckMsg", "nicknameOk");
+
+        return returnMap;
     }
 
     @Override
@@ -78,16 +79,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto login(MemberDto memberDto) {
-        int usernameCkeck = memberMapper.usernameCheck(memberDto.getUsername());
+        int usernameCheck = memberMapper.usernameCheck(memberDto.getUsername());
 
-        if(usernameCkeck == 0) {
+        if(usernameCheck == 0) {
             throw new RuntimeException("id not exist");
         }
+
         MemberDto loginMember = memberMapper.findByIdAndPassword(memberDto);
 
         if(loginMember == null) {
             throw new RuntimeException("wrong password");
         }
+
         return loginMember;
     }
 }

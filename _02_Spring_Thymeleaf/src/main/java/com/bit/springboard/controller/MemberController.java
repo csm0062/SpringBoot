@@ -8,26 +8,28 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController // @Controller + @Responsebody
+@RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
-    // @Controller를 사용해서  Controller bean 객체를 생성했을 때는
+    // @Controller를 사용해서 Contoller bean객체를 생성했을 때는
     // String 값을 리턴했을 때 ViewResolver가 동작했지만
     // @RestController에서 String 값을 리턴하면
-    // ViewResolver가 동작하지않고 String 값을 그래도 리턴한다.
-    // @RestController에서 화면을 리턴하기위해서는
-    // ModelAndView 객체를 리턴해야한다.
+    // ViewResolver가 동작하지 않고 String 값을 그대로 리턴한다.
+    // @RestController에서 화면을 리턴하기 위해서는
+    // ModelAndView 객체를 리턴해야 한다.
     @GetMapping("/join")
     public ModelAndView joinView() {
         ModelAndView mav = new ModelAndView();
@@ -43,7 +45,6 @@ public class MemberController {
         ModelAndView mav = new ModelAndView();
 
         mav.setViewName("member/login");
-
         return mav;
     }
 
@@ -52,7 +53,7 @@ public class MemberController {
         ResponseDto<Map<String, String>> responseDto = new ResponseDto<>();
         Map<String, String> returnMap = new HashMap<>();
 
-        try{
+        try {
             returnMap = memberService.usernameCheck(memberDto.getUsername());
 
             responseDto.setStatusCode(HttpStatus.OK.value());
@@ -60,15 +61,15 @@ public class MemberController {
             responseDto.setData(returnMap);
 
             return ResponseEntity.ok(responseDto);
-
         } catch(Exception e) {
             if(e.getMessage().equals("username duplicated")) {
-                // 우리가 601이라는 코드를 만들어서 넣어줄 수도 있다.
+                // 사용자 정의 에러코드
                 responseDto.setStatusCode(601);
             } else {
                 responseDto.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
             responseDto.setStatusMessage(e.getMessage());
+
             return ResponseEntity.internalServerError().body(responseDto);
         }
     }
@@ -76,24 +77,24 @@ public class MemberController {
     @PostMapping("/nickname-check")
     public ResponseEntity<?> nicknameCheck(MemberDto memberDto) {
         ResponseDto<Map<String, String>> responseDto = new ResponseDto<>();
-        Map<String, String> returnMap = new HashMap<>();
 
         try {
-            returnMap = memberService.nicknameCheck(memberDto.getNickname());
+            Map<String, String> returnMap = memberService.nicknameCheck(memberDto.getNickname());
 
-            responseDto.setStatusCode(HttpStatus.OK.value());
+            responseDto.setStatusCode(200);
             responseDto.setStatusMessage("OK");
             responseDto.setData(returnMap);
 
             return ResponseEntity.ok(responseDto);
-
-        } catch(Exception e) {
+        } catch (Exception e) {
             if(e.getMessage().equals("nickname duplicated")) {
                 responseDto.setStatusCode(602);
             } else {
                 responseDto.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
+
             responseDto.setStatusMessage(e.getMessage());
+
             return ResponseEntity.internalServerError().body(responseDto);
         }
     }
@@ -109,8 +110,10 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public ModelAndView login(MemberDto memberDto, HttpSession session, HttpServletResponse response) {
-        ModelAndView mav = new ModelAndView(); // 모델엔 뷰 객체 생성
+    public ModelAndView login(MemberDto memberDto,
+                              HttpSession session,
+                              HttpServletResponse response) {
+        ModelAndView mav = new ModelAndView();
 
         try {
             MemberDto loginMember = memberService.login(memberDto);
@@ -119,21 +122,28 @@ public class MemberController {
 
             // "/"로 리다이렉트 시키기
             response.sendRedirect("/");
-
-        } catch (Exception e) {
+        } catch(Exception e) {
             mav.addObject("loginFailMsg", e.getMessage());
-            mav.setViewName("/member/login");
+            mav.setViewName("member/login");
         }
+
         return mav;
     }
 
     @GetMapping("/logout")
-    public void logout(HttpSession session, HttpServletResponse response) {
+    public void logout(HttpSession session,
+                       HttpServletResponse response) {
         try {
             session.invalidate();
             response.sendRedirect("/member/login");
-        } catch (Exception e) {
+        } catch(Exception e) {
             System.out.println(e.getMessage());
         }
     }
+
+
+
+
+
+
 }

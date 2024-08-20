@@ -13,4 +13,8 @@ public interface FreeMapper {
     BoardDto findById(int id);
 
     void postFiles(List<BoardFileDto> boardFileDtoList);
+
+    List<BoardDto> findAll();
+
+    List<BoardFileDto> findFilesById(int id);
 }
