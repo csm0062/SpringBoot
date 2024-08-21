@@ -42,8 +42,15 @@
                     let dataTransfer2 = new DataTransfer();
 
                     for(i in uploadFiles) {
-                        const file = changeFiles[i];
+                        const file = uploadFiles[i];
                         dataTransfer1.items.add(file);
+                    }
+
+                    $("#uploadFiles")[0].files = dataTransfer1.files;
+
+                    for(i in changeFiles) {
+                        const file = changeFiles[i];
+                        dataTransfer2.items.add(file);
                     }
 
                     $("#changeFiles")[0].files = dataTransfer2.files;
@@ -54,13 +61,32 @@
 
                     $.ajax({
                         enctype: "multipart/form-data",
-                        url: `/board/${$("#id").val()}`,
+                        url: `/boards/${$("#id").val()}`,
                         type: "patch",
                         data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: (obj) => {
+                            // console.log(obj);
+                            if(obj.statusCode === 200) {
+                                alert("정상적으로 수정되었습니다.");
+                                location.href = `/boards/${obj.data.id}?type=free`
+                            }
+                        },
+                        error: (err) => {
+                            console.log(err);
+                        }
+                    });
+                });
+
+                $("#btn-delete").on("click", (e) => {
+                    $.ajax({
+                        url: `/boards/${$("#id").val()}?type=free`,
+                        type: "delete",
                         success: (obj) => {
                             console.log(obj);
                         },
-                        error: (err) => {
+                        error: (obj) => {
                             console.log(err);
                         }
                     });
@@ -189,7 +215,6 @@
 
                 return div;
             }
-
         </script>
     </th:block>
 </head>
@@ -248,7 +273,7 @@
                                        id="filecnt" name="filecnt" th:value="${fileStat.count}">
                                 <img th:if="${file.filetype} == 'image'"
                                      th:id="'img' + ${file.id}"
-                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-57/free/' + ${file.filename}}"
+                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-139/free/' + ${file.filename}}"
                                      class="upload-file"
                                      th:alt="${file.fileoriginname}"
                                      th:onclick="fileClick([[${file.id}]])">

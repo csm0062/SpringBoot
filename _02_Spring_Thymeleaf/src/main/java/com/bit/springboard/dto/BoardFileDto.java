@@ -16,4 +16,6 @@ public class BoardFileDto {
     private String fileoriginname;
     private String filepath;
     private String filetype;
+    private String filestatus;
+    private String newfilename;
 }

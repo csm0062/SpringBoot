@@ -5,15 +5,15 @@
 	justify-content: space-between;
 }
 
-#btnSearch {
+#btn-search {
 	display: none;
 }
 
-#searchIcon {
+#search-icon {
 	cursor: pointer;	
 }
 
-#boardContent {
+#content {
 	resize: none;
 }
 
@@ -51,9 +51,9 @@
 	font-size: 8px;
 }
 
-.board-tr {
-	cursor: pointer;
-}
+/*.board-tr {*/
+/*	cursor: pointer;*/
+/*}*/
 
 .card-wrapper {
 	display: grid;
@@ -63,4 +63,10 @@
 
 .card {
 	box-sizing: border-box;
+}
+
+.board-tr a {
+	text-decoration: none;
+	color: black;
+	cursor: pointer;
 }

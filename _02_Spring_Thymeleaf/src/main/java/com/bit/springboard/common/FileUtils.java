@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.bit.springboard.config.NaverConfiguration;
@@ -46,7 +47,7 @@ public class FileUtils {
     }
 
     public BoardFileDto parserFileInfo(MultipartFile multipartFile, String directory) {
-        String bucketName = "bitcamp-57";
+        String bucketName = "bitcamp-139";
 
         BoardFileDto boardFileDto = new BoardFileDto();
 
@@ -103,4 +104,12 @@ public class FileUtils {
 
         return boardFileDto;
     }
+
+    public void deleteFile(String directory, String fileName) {
+        String bucketName = "bitcamp-139";
+
+        s3.deleteObject(new DeleteObjectRequest(bucketName, directory + fileName));
+    }
+
+
 }

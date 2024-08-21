@@ -1,45 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        PUBLIC "-//mybatis.org//dtd/DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bit.springboard.mapper.NoticeMapper">
-    <insert id="post" parameterType="BoardDto">
+    <insert id="post"
+            parameterType="BoardDto">
         <selectKey keyProperty="id" order="AFTER" resultType="int">
             SELECT IFNULL(MAX(ID), 1) FROM NOTICE
         </selectKey>
-            INSERT INTO NOTICE(
-                TITLE,
-                CONTENT,
-                WRITER_ID
-            ) VALUES (
-                #{title},
-                #{content},
-                (
-                    SELECT M.ID
-                        FROM MEMBER M
-                        WHERE M.NICKNAME = #{nickname}
-                )
+        INSERT INTO NOTICE (
+            TITLE,
+            CONTENT,
+            WRITER_ID
+        ) VALUES (
+            #{title},
+            #{content},
+            (
+                SELECT M.ID
+                    FROM MEMBER M
+                    WHERE M.NICKNAME = #{nickname}
             )
+        )
     </insert>
 
-    <select id="findById"
-            parameterType="int"
-            resultType="BoardDto">
-        SELECT N.ID
-             , N.TITLE
-             , N.CONTENT
-             , N.WRITER_ID
-             , M.NICKNAME
-             , N.REGDATE
-             , N.MODDATE
-             , N.CNT
-        FROM NOTICE N
-                JOIN MEMBER M
-                  ON N.WRITER_ID = M.ID
-        WHERE N.ID = #{id}
-    </select>
-
-    <insert id="postFiles" parameterType="list">
+    <insert id="postFiles"
+            parameterType="list">
         INSERT INTO NOTICE_FILE (
             BOARD_ID,
             FILENAME,
@@ -57,4 +42,59 @@
             )
         </foreach>
     </insert>
+
+    <select id="findById"
+            parameterType="int"
+            resultType="BoardDto">
+        SELECT N.ID
+             , N.TITLE
+             , N.CONTENT
+             , N.WRITER_ID
+             , M.NICKNAME
+             , N.REGDATE
+             , N.MODDATE
+             , N.CNT
+             , 'notice' as type
+            FROM NOTICE N
+            JOIN MEMBER M
+              ON N.WRITER_ID = M.ID
+            WHERE N.ID = #{id}
+    </select>
+
+    <select id="findAll"
+            parameterType="map"
+            resultType="BoardDto">
+        SELECT N.ID
+             , N.TITLE
+             , N.CONTENT
+             , N.WRITER_ID
+             , M.NICKNAME
+             , N.REGDATE
+             , N.MODDATE
+             , N.CNT
+             , 'notice' as type
+            FROM NOTICE N
+            JOIN MEMBER M
+              ON N.WRITER_ID = M.ID
+    </select>
+
+    <select id="findFilesById" parameterType="int" resultType="BoardFileDto">
+        SELECT ID
+             , BOARD_ID
+             , FILENAME
+             , FILEORIGINNAME
+             , FILEPATH
+             , FILETYPE
+            FROM NOTICE_FILE
+            WHERE BOARD_ID = #{id}
+    </select>
+
+
+
+
+
+
+
+
+
 </mapper>
