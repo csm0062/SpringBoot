@@ -18,4 +18,20 @@ public interface NoticeMapper {
     List<BoardDto> findAll(Map<String, Object> paramMap);
 
     List<BoardFileDto> findFilesById(int id);
+
+    void updateBoardCnt(int id);
+
+    void remove(int id);
+
+    void removeFiles(int id);
+
+    void modify(BoardDto boardDto);
+
+    void modifyFile(BoardFileDto boardFileDto);
+
+    void removeFile(BoardFileDto boardFileDto);
+
+    void postFile(BoardFileDto boardFileDto);
+
+    int findTotalCnt(Map<String, String> searchMap);
 }

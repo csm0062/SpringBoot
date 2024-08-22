@@ -6,10 +6,14 @@ import com.bit.springboard.dto.BoardFileDto;
 import com.bit.springboard.dto.Criteria;
 import com.bit.springboard.mapper.NoticeMapper;
 import com.bit.springboard.service.BoardService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -62,7 +66,7 @@ public class NoticeServiceImpl implements BoardService {
 
     @Override
     public BoardDto findById(int id) {
-        return null;
+        return noticeMapper.findById(id);
     }
 
     @Override
@@ -72,21 +76,89 @@ public class NoticeServiceImpl implements BoardService {
 
     @Override
     public BoardDto modify(BoardDto boardDto, MultipartFile[] uploadFiles, MultipartFile[] changeFiles, String originFiles) {
-        return null;
+        List<BoardFileDto> originFileList = new ArrayList<>();
+
+        try {
+            originFileList = new ObjectMapper().readValue(
+                    originFiles,
+                    new TypeReference<List<BoardFileDto>>() {}
+            );
+        } catch (IOException ie) {
+            System.out.println(ie.getMessage());
+        }
+
+        List<BoardFileDto> uFileList = new ArrayList<>();
+
+        if(originFileList.size() > 0) {
+            originFileList.forEach(boardFileDto -> {
+                if(boardFileDto.getFilestatus().equals("U") && changeFiles != null) {
+                    Arrays.stream(changeFiles).forEach(file -> {
+                        if(boardFileDto.getNewfilename().equals(file.getOriginalFilename())) {
+                            BoardFileDto updatedBoardFileDto = fileUtils.parserFileInfo(file, "notice/");
+
+                            updatedBoardFileDto.setId(boardFileDto.getId());
+                            updatedBoardFileDto.setBoard_id(boardDto.getId());
+                            updatedBoardFileDto.setFilestatus("U");
+
+                            uFileList.add(updatedBoardFileDto);
+                        }
+                    });
+                } else if(boardFileDto.getFilestatus().equals("D")) {
+                    BoardFileDto deleteBoardFileDto = new BoardFileDto();
+
+                    deleteBoardFileDto.setBoard_id(boardDto.getId());
+                    deleteBoardFileDto.setId(boardFileDto.getId());
+                    deleteBoardFileDto.setFilestatus("D");
+
+                    fileUtils.deleteFile("notice/", boardFileDto.getFilename());
+
+                    uFileList.add(deleteBoardFileDto);
+                }
+            });
+        }
+
+        if(uploadFiles != null && uploadFiles.length > 0) {
+            Arrays.stream(uploadFiles).forEach(file -> {
+                if(!file.getOriginalFilename().equals("") && file.getOriginalFilename() != null) {
+                    BoardFileDto postBoardFileDto = fileUtils.parserFileInfo(file, "notice/");
+
+                    postBoardFileDto.setBoard_id(boardDto.getId());
+                    postBoardFileDto.setFilestatus("I");
+
+                    uFileList.add(postBoardFileDto);
+                }
+            });
+        }
+
+        boardDto.setModdate(LocalDateTime.now());
+        noticeMapper.modify(boardDto);
+
+        uFileList.forEach(boardFileDto -> {
+            if(boardFileDto.getFilestatus().equals("U")) {
+                noticeMapper.modifyFile(boardFileDto);
+            } else if(boardFileDto.getFilestatus().equals("D")) {
+                noticeMapper.removeFile(boardFileDto);
+            } else if(boardFileDto.getFilestatus().equals("I")) {
+                noticeMapper.postFile(boardFileDto);
+            }
+        });
+
+        return noticeMapper.findById(boardDto.getId());
     }
 
     @Override
     public void updateBoardCnt(int id) {
-
+        noticeMapper.updateBoardCnt(id);
     }
 
     @Override
     public void remove(int id) {
-
+        noticeMapper.removeFiles(id);
+        noticeMapper.remove(id);
     }
 
     @Override
     public int findTotalCnt(Map<String, String> searchMap) {
-        return 0;
+        return noticeMapper.findTotalCnt(searchMap);
     }
 }
