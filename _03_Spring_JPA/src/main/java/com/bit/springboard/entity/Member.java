@@ -1,22 +1,22 @@
 package com.bit.springboard.entity;
 
+import com.bit.springboard.dto.MemberDto;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
 
 @Entity
-// @Table을 Drop하면 자동으로 class명으로 테이블이 생성됨
-// @Table(name = "T_MEMBER")
+//@Table(name = "T_MEMBER")
 @Getter
 @Setter
-// @DynamicInsert null 값이 입력되면 Default값으로 지정해주는 어노테이션
 @DynamicInsert
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
-    // @Id: private Long id => 이걸 PrimaryKey로 지정하는 어노테이션
     @Id
     @GeneratedValue(
             strategy = GenerationType.IDENTITY
@@ -29,18 +29,38 @@ public class Member {
     @Column(length = 300)
     private String password;
 
+    private String email;
+
     @Column(unique = true)
     private String nickname;
-
-    private String email;
 
     private String tel;
 
     @ColumnDefault("'ROLE_USER'")
     private String role;
 
-    // @Transient: 테이블에서 생성되지 않고 java에서만 사용할 변수를 선언하는 어노테이션
 //    @Transient
 //    private LocalDateTime regdate;
+
+    public MemberDto toDto() {
+        return MemberDto.builder()
+                .id(this.id)
+                .username(this.username)
+                .password(this.password)
+                .email(this.email)
+                .nickname(this.nickname)
+                .tel(this.tel)
+                .role(this.role)
+                .build();
+    }
+
+
+
+
+
+
+
+
+
 
 }

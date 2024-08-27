@@ -47,7 +47,7 @@
     </select>
 
     <select id="findById"
-            parameterType="int"
+            parameterType="long"
             resultType="MemberDto">
         SELECT ID
              , USERNAME
@@ -60,7 +60,7 @@
     </select>
 
     <delete id="remove"
-            parameterType="int">
+            parameterType="long">
         DELETE FROM MEMBER
             WHERE ID = #{id}
     </delete>

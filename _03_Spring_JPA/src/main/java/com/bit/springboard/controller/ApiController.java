@@ -4,6 +4,7 @@ import com.bit.springboard.dto.BoardDto;
 import com.bit.springboard.dto.MemberDto;
 import com.bit.springboard.dto.ResponseDto;
 import com.bit.springboard.entity.FreeBoard;
+import com.bit.springboard.entity.FreeBoardFile;
 import com.bit.springboard.entity.Member;
 import com.bit.springboard.service.ApiService;
 import com.bit.springboard.service.BoardService;
@@ -15,6 +16,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +66,7 @@ public class ApiController {
             MemberDto memberDto) {
         ResponseDto<Member> responseDto = new ResponseDto<>();
         try {
-            Member savedMember =apiService.save(memberDto);
+            Member savedMember = apiService.save(memberDto);
             responseDto.setStatusCode(HttpStatus.CREATED.value());
             responseDto.setStatusMessage("CREATED");
             responseDto.setData(savedMember);
@@ -91,14 +97,14 @@ public class ApiController {
             )
     })
     @GetMapping("/members")
-    public ResponseEntity<?> findAll() {
+    public ResponseEntity<?> findAll(@PageableDefault(page = 0, size = 5) Pageable pageable) {
         ResponseDto<Member> responseDto = new ResponseDto<>();
 
         try {
-            List<Member> memberList = apiService.findAll();
+            Page<Member> memberList = apiService.findAll(pageable);
             responseDto.setStatusCode(HttpStatus.OK.value());
             responseDto.setStatusMessage("OK");
-            responseDto.setDataList(memberList);
+            responseDto.setDataPaging(memberList);
 
             return ResponseEntity.ok(responseDto);
         } catch(Exception e) {
@@ -258,8 +264,8 @@ public class ApiController {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity boardDetail(@PathVariable("id") Long id) {
+    @GetMapping("/boards/{id}")
+    public ResponseEntity<?> boardDetail(@PathVariable("id") Long id) {
         ResponseDto<FreeBoard> responseDto = new ResponseDto<>();
 
         try {
@@ -277,4 +283,102 @@ public class ApiController {
         }
     }
 
+    @GetMapping("/boards-titles")
+    public ResponseEntity<?> findByTitle(@RequestParam("title") String title) {
+        ResponseDto<FreeBoard> responseDto = new ResponseDto<>();
+
+        try {
+            FreeBoard freeBoard = apiService.findByTitle(title);
+
+            responseDto.setStatusCode(200);
+            responseDto.setStatusMessage("OK");
+            responseDto.setData(freeBoard);
+
+            return ResponseEntity.ok(responseDto);
+        } catch(Exception e) {
+            responseDto.setStatusCode(500);
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
+
+    @GetMapping("/members-username-email")
+    public ResponseEntity<?> findByUsernameEmail(@RequestParam("username") String username,
+                                                 @RequestParam("email") String email) {
+        ResponseDto<Member> responseDto = new ResponseDto<>();
+
+        try {
+            List<Member> memberList = apiService.findByUsernameOrEmail(username, email);
+
+            responseDto.setStatusCode(200);
+            responseDto.setStatusMessage("OK");
+            responseDto.setDataList(memberList);
+
+            return ResponseEntity.ok(responseDto);
+
+        } catch (Exception e) {
+            responseDto.setStatusCode(500);
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
+
+    @GetMapping("/members-username-like")
+    public ResponseEntity<?> findByUsernameLike(@RequestParam("username") String username) {
+        ResponseDto<Member> responseDto = new ResponseDto<>();
+
+        try {
+            List<Member> memberList = apiService.findByUsernameLike(username);
+
+            responseDto.setStatusCode(200);
+            responseDto.setStatusMessage("OK");
+            responseDto.setDataList(memberList);
+
+            return ResponseEntity.ok(responseDto);
+
+        } catch (Exception e) {
+            responseDto.setStatusCode(500);
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
+
+    @GetMapping("/members-id-between")
+    public ResponseEntity<?> findByIdBetween(@RequestParam("startId") Long startId,
+                                                 @RequestParam("endId") Long endId) {
+        ResponseDto<Member> responseDto = new ResponseDto<>();
+
+        try {
+            List<Member> memberList = apiService.findByIdBetween(startId, endId);
+
+            responseDto.setStatusCode(200);
+            responseDto.setStatusMessage("OK");
+            responseDto.setDataList(memberList);
+
+            return ResponseEntity.ok(responseDto);
+
+        } catch (Exception e) {
+            responseDto.setStatusCode(500);
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
+
+    @GetMapping("/boards-username")
+    public ResponseEntity<?> findByMemberUsername(@RequestParam("username") String username) {
+        ResponseDto<FreeBoard> responseDto = new ResponseDto<>();
+
+        try {
+            List<FreeBoard> freeBoardList = apiService.findByMemberUsername(username);
+
+            responseDto.setStatusCode(200);
+            responseDto.setStatusMessage("OK");
+            responseDto.setDataList(freeBoardList);
+            return ResponseEntity.ok(responseDto);
+        } catch(Exception e) {
+            responseDto.setStatusCode(500);
+            responseDto.setStatusMessage(e.getMessage());
+            return ResponseEntity.internalServerError().body(responseDto);
+        }
+    }
 }

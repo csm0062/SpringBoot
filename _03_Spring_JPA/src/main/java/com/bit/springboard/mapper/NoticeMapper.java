@@ -13,13 +13,13 @@ public interface NoticeMapper {
 
     void postFiles(List<BoardFileDto> boardFileDtoList);
 
-    BoardDto findById(int id);
+    BoardDto findById(Long id);
 
     List<BoardDto> findAll(Map<String, Object> paramMap);
 
-    List<BoardFileDto> findFilesById(int id);
+    List<BoardFileDto> findFilesById(Long id);
 
-    void updateBoardCnt(int id);
+    void updateBoardCnt(Long id);
 
     void modify(BoardDto boardDto);
 
@@ -31,7 +31,7 @@ public interface NoticeMapper {
 
     int findTotalCnt(Map<String, String> searchMap);
 
-    void removeFiles(int id);
+    void removeFiles(Long id);
 
-    void remove(int id);
+    void remove(Long id);
 }

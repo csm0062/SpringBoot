@@ -7,10 +7,13 @@ import com.bit.springboard.dto.MemberDto;
 import com.bit.springboard.entity.FreeBoard;
 import com.bit.springboard.entity.FreeBoardFile;
 import com.bit.springboard.entity.Member;
+import com.bit.springboard.repository.FreeBoardFileRepository;
 import com.bit.springboard.repository.FreeBoardRepository;
 import com.bit.springboard.repository.MemberRepository;
 import com.bit.springboard.service.ApiService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,27 +23,27 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-// @RequiredArgsConstructor => 생성자 주입 (의존성 주입)
 @RequiredArgsConstructor
 public class ApiServiceImpl implements ApiService {
     private final MemberRepository memberRepository;
     private final FileUtils fileUtils;
     private final FreeBoardRepository freeBoardRepository;
+    private final FreeBoardFileRepository freeBoardFileRepository;
 
     @Override
     public Member save(MemberDto memberDto) {
         Member member = new Member();
         member.setUsername(memberDto.getUsername());
         member.setPassword(memberDto.getPassword());
+        member.setEmail(memberDto.getEmail());
         member.setNickname(memberDto.getNickname());
         member.setTel(memberDto.getTel());
-        member.setEmail(memberDto.getEmail());
         return memberRepository.save(member);
     }
 
     @Override
-    public List<Member> findAll() {
-        return memberRepository.findAll();
+    public Page<Member> findAll(Pageable pageable) {
+        return memberRepository.findAllByOrderByIdDesc(pageable);
     }
 
     @Override
@@ -90,7 +93,7 @@ public class ApiServiceImpl implements ApiService {
 
         freeBoard.setTitle(boardDto.getTitle());
         freeBoard.setContent(boardDto.getContent());
-        freeBoard.setMember(memberRepository.findById((long)boardDto.getWriter_id()).orElseThrow());
+        freeBoard.setMember(memberRepository.findById((long) boardDto.getWriter_id()).orElseThrow());
         freeBoard.setBoardFileList(freeBoardFileList);
         freeBoard.setCnt(0);
         freeBoard.setRegdate(LocalDateTime.now());
@@ -106,4 +109,38 @@ public class ApiServiceImpl implements ApiService {
         return freeBoardRepository.findById(id).orElseThrow();
     }
 
+    @Override
+    public FreeBoardFile findFreeBoardFileById(Long id) {
+        return freeBoardFileRepository.findById(id).orElseThrow();
+    }
+
+    @Override
+    public FreeBoard findByTitle(String title) {
+        return freeBoardRepository.findByTitle(title).orElseThrow();
+    }
+
+    @Override
+    public List<Member> findByUsernameAndEmail(String username, String email) {
+        return memberRepository.findByUsernameAndEmail(username, email);
+    }
+
+    @Override
+    public List<Member> findByUsernameOrEmail(String username, String email) {
+        return memberRepository.findByUsernameOrEmail(username, email);
+    }
+
+    @Override
+    public List<Member> findByUsernameLike(String username) {
+        return memberRepository.findByUsernameContaining(username);
+    }
+
+    @Override
+    public List<Member> findByIdBetween(Long startId, Long endId) {
+        return memberRepository.findByIdBetween(startId, endId);
+    }
+
+    @Override
+    public List<FreeBoard> findByMemberUsername(String username) {
+        return freeBoardRepository.findByMemberUsername(username);
+    }
 }

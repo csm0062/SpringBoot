@@ -1,7 +1,9 @@
 package com.bit.springboard.service.impl;
 
 import com.bit.springboard.dto.MemberDto;
+import com.bit.springboard.entity.Member;
 import com.bit.springboard.mapper.MemberMapper;
+import com.bit.springboard.repository.MemberRepository;
 import com.bit.springboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,11 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
+    private final MemberRepository memberRepository;
 
     @Override
     public MemberDto save(MemberDto memberDto) {
@@ -27,12 +31,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberDto findById(int id) {
+    public MemberDto findById(Long id) {
         return memberMapper.findById(id);
     }
 
     @Override
-    public void remove(int id) {
+    public void remove(Long id) {
         memberMapper.remove(id);
     }
 
@@ -46,7 +50,7 @@ public class MemberServiceImpl implements MemberService {
     public Map<String, String> usernameCheck(String username) {
         Map<String, String> returnMap = new HashMap<>();
 
-        int usernameCheck = memberMapper.usernameCheck(username);
+        long usernameCheck = memberRepository.countByUsername(username);
 
         if(usernameCheck != 0) {
             throw new RuntimeException("username duplicated");
@@ -61,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
     public Map<String, String> nicknameCheck(String nickname) {
         Map<String, String> returnMap = new HashMap<>();
 
-        int nicknameCheck = memberMapper.nicknameCheck(nickname);
+        long nicknameCheck = memberRepository.countByNickname(nickname);
 
         if(nicknameCheck != 0) {
             throw new RuntimeException("nickname duplicated");
@@ -73,24 +77,26 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void join(MemberDto memberDto) {
-        memberMapper.save(memberDto);
+    public MemberDto join(MemberDto memberDto) {
+        return memberRepository.save(memberDto.toEntity()).toDto();
     }
 
     @Override
     public MemberDto login(MemberDto memberDto) {
-        int usernameCheck = memberMapper.usernameCheck(memberDto.getUsername());
+        long usernameCheck = memberRepository.countByUsername(memberDto.getUsername());
 
         if(usernameCheck == 0) {
             throw new RuntimeException("id not exist");
         }
 
-        MemberDto loginMember = memberMapper.findByIdAndPassword(memberDto);
+//        MemberDto loginMember = memberMapper.findByIdAndPassword(memberDto);
+        Optional<Member> loginMember = memberRepository.findByUsernameAndPassword(
+                memberDto.getUsername(), memberDto.getPassword());
 
-        if(loginMember == null) {
-            throw new RuntimeException("wrong password");
-        }
+//        if(loginMember == null) {
+//            throw new RuntimeException("wrong password");
+//        }
 
-        return loginMember;
+        return loginMember.orElseThrow(() -> new RuntimeException("wrong password")).toDto();
     }
 }

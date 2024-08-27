@@ -13,9 +13,9 @@ public interface MemberMapper {
 
     List<MemberDto> findAll();
 
-    MemberDto findById(int id);
+    MemberDto findById(Long id);
 
-    void remove(int id);
+    void remove(Long id);
 
     void modify(MemberDto memberDto);
 

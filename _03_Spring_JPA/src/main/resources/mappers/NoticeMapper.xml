@@ -44,7 +44,7 @@
     </insert>
 
     <select id="findById"
-            parameterType="int"
+            parameterType="long"
             resultType="BoardDto">
         SELECT N.ID
              , N.TITLE
@@ -88,7 +88,7 @@
     </select>
 
     <select id="findFilesById"
-            parameterType="int"
+            parameterType="long"
             resultType="BoardFileDto">
         SELECT ID
              , BOARD_ID
@@ -172,13 +172,13 @@
     </select>
 
     <delete id="removeFiles"
-            parameterType="int">
+            parameterType="long">
         DELETE FROM NOTICE_FILE
             WHERE BOARD_ID = #{id}
     </delete>
 
     <delete id="remove"
-            parameterType="int">
+            parameterType="long">
         DELETE FROM NOTICE
             WHERE ID = #{id}
     </delete>

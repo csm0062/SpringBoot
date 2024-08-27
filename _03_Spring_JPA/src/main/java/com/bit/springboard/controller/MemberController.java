@@ -101,9 +101,12 @@ public class MemberController {
 
     @PostMapping("/join")
     public ModelAndView join(MemberDto memberDto) {
-        memberService.join(memberDto);
+        MemberDto savedMemberDto = memberService.join(memberDto);
+
+        savedMemberDto.setPassword("");
 
         ModelAndView mav = new ModelAndView();
+        mav.addObject("savedMemberDto", savedMemberDto);
         mav.setViewName("member/login");
 
         return mav;
@@ -117,6 +120,8 @@ public class MemberController {
 
         try {
             MemberDto loginMember = memberService.login(memberDto);
+
+            loginMember.setPassword("");
 
             session.setAttribute("loginMember", loginMember);
 

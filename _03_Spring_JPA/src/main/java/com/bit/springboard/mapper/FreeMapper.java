@@ -11,13 +11,13 @@ import java.util.Map;
 public interface FreeMapper {
     void post(BoardDto boardDto);
 
-    BoardDto findById(int id);
+    BoardDto findById(Long id);
 
     void postFiles(List<BoardFileDto> boardFileDtoList);
 
     List<BoardDto> findAll(Map<String, Object> paramMap);
 
-    List<BoardFileDto> findFilesById(int id);
+    List<BoardFileDto> findFilesById(Long id);
 
     void modify(BoardDto boardDto);
 
@@ -27,11 +27,11 @@ public interface FreeMapper {
 
     void postFile(BoardFileDto boardFileDto);
 
-    void updateBoardCnt(int id);
+    void updateBoardCnt(Long id);
 
-    void removeFiles(int id);
+    void removeFiles(Long id);
 
-    void remove(int id);
+    void remove(Long id);
 
     int findTotalCnt(Map<String, String> searchMap);
 }

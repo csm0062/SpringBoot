@@ -24,7 +24,7 @@
     </insert>
 
     <select id="findById"
-            parameterType="int"
+            parameterType="long"
             resultType="BoardDto">
         SELECT F.ID
              , F.TITLE
@@ -99,7 +99,7 @@
     </select>
 
     <select id="findFilesById"
-            parameterType="int"
+            parameterType="long"
             resultType="BoardFileDto">
         SELECT ID
              , BOARD_ID
@@ -158,7 +158,7 @@
     </insert>
 
     <update id="updateBoardCnt"
-            parameterType="int">
+            parameterType="long">
         UPDATE FREEBOARD
             SET
                 CNT = CNT + 1
@@ -166,13 +166,13 @@
     </update>
 
     <delete id="removeFiles"
-            parameterType="int">
+            parameterType="long">
         DELETE FROM FREEBOARD_FILE
             WHERE BOARD_ID = #{id}
     </delete>
 
     <delete id="remove"
-            parameterType="int">
+            parameterType="long">
         DELETE FROM FREEBOARD
             WHERE ID = #{id}
     </delete>
