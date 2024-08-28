@@ -48,7 +48,7 @@ public class ApiServiceImpl implements ApiService {
 
     @Override
     public Member findById(Long id) {
-        return memberRepository.findById(id).orElseThrow();
+        return memberRepository.searchOne(id);
     }
 
     @Override

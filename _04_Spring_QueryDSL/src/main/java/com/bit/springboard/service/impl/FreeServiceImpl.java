@@ -69,21 +69,21 @@ public class FreeServiceImpl implements BoardService {
 
     @Override
     public Page<BoardDto> findAll(Map<String, String> searchMap, Pageable pageable) {
-        Page<FreeBoard> freeBoardPage = freeBoardRepository.findAllFreeBoard(pageable);
+        Page<FreeBoard> freeBoardPage = freeBoardRepository.searchAll(pageable, searchMap);
 
-        if(searchMap.get("searchKeyword") != null) {
-            if(searchMap.get("searchCondition").toLowerCase().equals("all")) {
-                freeBoardPage = freeBoardRepository.findBysearchKeyword(
-                        pageable, searchMap.get("searchKeyword")
-                );
-            } else if(searchMap.get("searchCondition").toLowerCase().equals("title")) {
-                freeBoardPage = freeBoardRepository.findByTitleContaining(pageable, searchMap.get("searchKeyword"));
-            } else if(searchMap.get("searchCondition").toLowerCase().equals("content")) {
-                freeBoardPage = freeBoardRepository.findByContentContaining(pageable, searchMap.get("searchKeyword"));
-            }  else if(searchMap.get("searchCondition").toLowerCase().equals("writer")) {
-                freeBoardPage = freeBoardRepository.findByMemberNicknameContaining(pageable, searchMap.get("searchKeyword"));
-            }
-        }
+//        if(searchMap.get("searchKeyword") != null) {
+//            if(searchMap.get("searchCondition").toLowerCase().equals("all")) {
+//                freeBoardPage = freeBoardRepository.findBysearchKeyword(
+//                        pageable, searchMap.get("searchKeyword")
+//                );
+//            } else if(searchMap.get("searchCondition").toLowerCase().equals("title")) {
+//                freeBoardPage = freeBoardRepository.findByTitleContaining(pageable, searchMap.get("searchKeyword"));
+//            } else if(searchMap.get("searchCondition").toLowerCase().equals("content")) {
+//                freeBoardPage = freeBoardRepository.findByContentContaining(pageable, searchMap.get("searchKeyword"));
+//            }  else if(searchMap.get("searchCondition").toLowerCase().equals("writer")) {
+//                freeBoardPage = freeBoardRepository.findByMemberNicknameContaining(pageable, searchMap.get("searchKeyword"));
+//            }
+//        }
 
         return freeBoardPage.map(FreeBoard::toDto);
     }

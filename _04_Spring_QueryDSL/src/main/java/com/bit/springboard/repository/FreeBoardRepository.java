@@ -8,9 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
+public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long>, FreeBoardRepositoryCustom {
     /**
      *
      * @param title
@@ -51,4 +52,6 @@ public interface FreeBoardRepository extends JpaRepository<FreeBoard, Long> {
             countQuery = "select count(*) from FreeBoard",
             nativeQuery = true)
     Page<FreeBoard> findAllFreeBoard(Pageable pageable);
+
+    Page<FreeBoard> searchAll(Pageable pageable, Map<String, String> searchMap);
 }
