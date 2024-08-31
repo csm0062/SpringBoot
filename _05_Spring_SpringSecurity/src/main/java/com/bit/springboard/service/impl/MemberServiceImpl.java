@@ -6,6 +6,7 @@ import com.bit.springboard.mapper.MemberMapper;
 import com.bit.springboard.repository.MemberRepository;
 import com.bit.springboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MemberDto save(MemberDto memberDto) {
@@ -78,6 +80,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberDto join(MemberDto memberDto) {
+        memberDto.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         return memberRepository.save(memberDto.toEntity()).toDto();
     }
 
@@ -96,7 +99,6 @@ public class MemberServiceImpl implements MemberService {
 //        if(loginMember == null) {
 //            throw new RuntimeException("wrong password");
 //        }
-
         return loginMember.orElseThrow(() -> new RuntimeException("wrong password")).toDto();
     }
 }

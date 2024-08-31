@@ -36,7 +36,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
     List<Member> findByEmail(@Param("email") String email);
 
     @Query("select m from Member m where m.id > :id and m.nickname like concat('%', :nickname, '%')")
-    List<Member> findBiggerThanNicknameContaining(@Param("id") Long id, @Param("nickname") String nickname);
+    List<Member> findBiggerThanNicknameContaining(@Param("id") Long id,
+                                                  @Param("nickname") String nickname);
 
     @Query("select m from Member m")
     Page<Member> findAll(Pageable pageable);
@@ -48,4 +49,6 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberRep
             countQuery = "select count(*) from Member",
             nativeQuery = true)
     Page<Member> findAllMembers(Pageable pageable);
+
+    Optional<Member> findByUsername(String username);
 }

@@ -112,28 +112,28 @@ public class MemberController {
         return mav;
     }
 
-    @PostMapping("/login")
-    public ModelAndView login(MemberDto memberDto,
-                              HttpSession session,
-                              HttpServletResponse response) {
-        ModelAndView mav = new ModelAndView();
-
-        try {
-            MemberDto loginMember = memberService.login(memberDto);
-
-            loginMember.setPassword("");
-
-            session.setAttribute("loginMember", loginMember);
-
-            // "/"로 리다이렉트 시키기
-            response.sendRedirect("/");
-        } catch(Exception e) {
-            mav.addObject("loginFailMsg", e.getMessage());
-            mav.setViewName("member/login");
-        }
-
-        return mav;
-    }
+//    @PostMapping("/login")
+//    public ModelAndView login(MemberDto memberDto,
+//                              HttpSession session,
+//                              HttpServletResponse response) {
+//        ModelAndView mav = new ModelAndView();
+//
+//        try {
+//            MemberDto loginMember = memberService.login(memberDto);
+//
+//            loginMember.setPassword("");
+//
+//            session.setAttribute("loginMember", loginMember);
+//
+//            // "/"로 리다이렉트 시키기
+//            response.sendRedirect("/");
+//        } catch(Exception e) {
+//            mav.addObject("loginFailMsg", e.getMessage());
+//            mav.setViewName("member/login");
+//        }
+//
+//        return mav;
+//    }
 
     @GetMapping("/logout")
     public void logout(HttpSession session,
