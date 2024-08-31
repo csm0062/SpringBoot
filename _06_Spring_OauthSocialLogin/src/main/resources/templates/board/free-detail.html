@@ -7,8 +7,8 @@
     <th:block layout:fragment="script">
         <script>
             const uploadFiles = [];
-            const changeFiles = [];
             const originFiles = [];
+            const changeFiles = [];
 
             $(() => {
                 for(let i = 0; i < $("#filecnt").val(); i++) {
@@ -17,7 +17,7 @@
                         id: $("#fileId" + i).val(),
                         filename: $("#filename" + i).val(),
                         filestatus: "N"
-                    }
+                    };
 
                     originFiles.push(originFileObj);
                 }
@@ -33,69 +33,64 @@
                 });
 
                 $("#modify-form").on("submit", (e) => {
-                    e.preventDefault();
+                   e.preventDefault();
 
-                    let dataTransfer1 = new DataTransfer();
-                    let dataTransfer2 = new DataTransfer();
+                   $("#regdate").val(`${$("#regdate").val()}T00:00:00`);
+                   $("#moddate").val(`${$("#moddate").val()}T00:00:00`);
 
-                    // $("#uploadFiles")[0].files = uploadFiles;
-                    for(i in uploadFiles) {
-                        const file = uploadFiles[i];
-                        dataTransfer1.items.add(file);
-                    }
+                   let dataTransfer1 = new DataTransfer();
+                   let dataTransfer2 = new DataTransfer();
 
-                    $("#uploadFiles")[0].files = dataTransfer1.files;
+                   for(i in uploadFiles) {
+                       const file = uploadFiles[i];
+                       dataTransfer1.items.add(file);
+                   }
 
-                    for(i in changeFiles) {
-                        const file = changeFiles[i];
-                        dataTransfer2.items.add(file);
-                    }
+                   $("#uploadFiles")[0].files = dataTransfer1.files;
 
-                    $("#changeFiles")[0].files = dataTransfer2.files;
+                   for(i in changeFiles) {
+                       const file = changeFiles[i];
+                       dataTransfer2.items.add(file);
+                   }
 
-                    $("#originFiles").val(JSON.stringify(originFiles));
+                   $("#changeFiles")[0].files = dataTransfer2.files;
 
-                    const formData = new FormData($("#modify-form")[0]);
+                   $("#originFiles").val(JSON.stringify(originFiles));
 
-                    // FormData 객체에 새로운 키, 밸류 형태의 데이터를 추가할 때는 append 메소드를 사용
-                    // formData.append("aaa", 1111);
-                    // formData.append("bbb", 2222);
+                   const formData = new FormData($("#modify-form")[0]);
 
-                    // FormData에 이미 존재하는 키의 밸류를 변경하려면 set 메소드를 사용
-                    formData.set("regdate", `${$("#regdate").val()}T00:00:00`);
-                    formData.set("moddate", `${$("#moddate").val()}T00:00:00`);
-
-                    $.ajax({
-                        url: `/boards/${$("#id").val()}`,
-                        type: "patch",
-                        data: formData,
-                        enctype: "multipart/form-data",
-                        processData: false,
-                        contentType: false,
-                        success: (obj) => {
-                            if(obj.statusCode === 200) {
-                                alert("정상적으로 수정되었습니다.");
-                                location.href = `/boards/${obj.data.id}?type=notice`;
-                            }
-                        },
-                        error: (err) => {
-                            console.log(err);
-                        }
-                    })
+                   $.ajax({
+                       enctype: "multipart/form-data",
+                       url: `/boards/${$("#id").val()}`,
+                       type: "patch",
+                       data: formData,
+                       processData: false,
+                       contentType: false,
+                       success: (obj) => {
+                           // console.log(obj);
+                           if(obj.statusCode === 200) {
+                               alert("정상적으로 수정되었습니다.");
+                               location.href = `/boards/${obj.data.id}?type=free`
+                           }
+                       },
+                       error: (err) => {
+                           console.log(err);
+                       }
+                   });
                 });
 
                 $("#btn-delete").on("click", (e) => {
-                    $.ajax({
-                        url: `/boards/${$("#id").val()}?type=notice`,
-                        type: "delete",
-                        success: (obj) => {
-                            alert("정상적으로 삭제되었습니다.");
-                            location.href = '/boards/notice-list';
-                        },
-                        error: (err) => {
-                            console.log(err);
-                        }
-                    });
+                   $.ajax({
+                       url: `/boards/${$("#id").val()}?type=free`,
+                       type: "delete",
+                       success: (obj) => {
+                           alert("정상적으로 삭제되었습니다.");
+                           location.href = "/boards/free-list";
+                       },
+                       error: (err) => {
+                           console.log(err);
+                       }
+                   });
                 });
             });
 
@@ -104,7 +99,6 @@
             }
 
             const changeFile = (fileId, e) => {
-                console.log(e);
                 const files = e.target.files;
 
                 const fileArr = Array.prototype.slice.call(files);
@@ -120,7 +114,7 @@
                     if(fileArr[0].name.match(/(.*?)\.(jpg|jpeg|png|gif|bmp)$/)) {
                         img.src = event.target.result;
                     } else {
-                        img.src = "/images/defaultFileImg.png";
+                        img.src = '/images/defaultFileImg.png';
                     }
 
                     p.textContent = fileArr[0].name;
@@ -148,7 +142,6 @@
                 }
 
                 const parentDiv = element.parentNode;
-
                 $(parentDiv).remove();
             }
 
@@ -223,18 +216,19 @@
 
                 return div;
             }
+
         </script>
     </th:block>
 </head>
 <body>
     <main layout:fragment="content">
         <div class="container w-50 mt-5 mb-5">
-            <h4>공지사항 상세</h4>
+            <h4>자유게시글 상세</h4>
         </div>
         <div class="container mt-3 w-50">
-            <form id="modify-form" action="#" method="post">
+            <form id="modify-form" action="#" method="">
                 <input type="hidden" id="id" name="id" th:value="${board.id}">
-                <input type="hidden" id="type" name="type" value="notice">
+                <input type="hidden" id="type" name="type" value="free">
                 <input type="hidden" id="originFiles" name="originFiles">
                 <div class="form-group">
                     <label for="title">제목</label>
@@ -246,22 +240,19 @@
                 </div>
                 <div class="form-group mt-3">
                     <label for="content">내용</label>
-                    <textarea class="form-control" id="content" name="content" rows="10" th:text="${board.content}" required></textarea>
+                    <textarea class="form-control" id="content" name="content" rows="10" required th:text="${board.content}"></textarea>
                 </div>
                 <div class="form-group mt-3">
                     <label for="regdate">등록일</label>
-                    <input type="text" class="form-control" id="regdate" name="regdate"
-                           th:value="${#temporals.format(board.regdate, 'yyyy-MM-dd')}" required>
+                    <input type="text" class="form-control" id="regdate" name="regdate" th:value="${#temporals.format(board.regdate, 'yyyy-MM-dd')}" required>
                 </div>
                 <div class="form-group mt-3">
                     <label for="moddate">수정일</label>
-                    <input type="text" class="form-control" id="moddate" name="moddate"
-                           th:value="${#temporals.format(board.moddate, 'yyyy-MM-dd')}" required>
+                    <input type="text" class="form-control" id="moddate" name="moddate" th:value="${#temporals.format(board.moddate, 'yyyy-MM-dd')}" required>
                 </div>
                 <div class="form-group mt-3">
                     <label for="cnt">조회수</label>
-                    <input type="text" class="form-control" id="cnt" name="cnt"
-                           th:value="${board.cnt}" required>
+                    <input type="text" class="form-control" id="cnt" name="cnt" th:value="${board.cnt}" required>
                 </div>
                 <div class="form-group mt-3">
                     <label for="uploadFiles">파일첨부</label>
@@ -274,24 +265,21 @@
                         </p>
                         <div id="preview" class="mt-3 text-center"
                              data-placeholder="파일을 첨부하려면 파일선택 버튼을 누르세요.">
-                            <div class="upload-file-div" th:each="file : ${board.boardFileDtoList}">
-                                <input type="hidden" th:id="'fileId' + ${fileStat.index}"
-                                       th:value="${file.id}">
-                                <input type="hidden" th:id="'filename' + ${fileStat.index}"
-                                       th:value="${file.filename}">
-                                <input type="file" th:id="'changeFile' + ${file.id}"
-                                       th:name="'changeFile' + ${file.id}"
+                            <div class="upload-file-div" th:each="file, fileStat : ${board.boardFileDtoList}">
+                                <input type="hidden" th:id="'fileId' + ${fileStat.index}" th:value="${file.id}">
+                                <input type="hidden" th:id="'filename' + ${fileStat.index}" th:value="${file.filename}">
+                                <input type="file" th:id="'changeFile' + ${file.id}" th:name="'changeFile' + ${file.id}"
                                        style="display: none;"
                                        th:onchange="changeFile([[${file.id}]], event)">
                                 <input th:if="${fileStat.last}" type="hidden"
                                        id="filecnt" name="filecnt" th:value="${fileStat.count}">
-                                <img th:if="${file.filetype == 'image'}"
+                                <img th:if="${file.filetype} == 'image'"
                                      th:id="'img' + ${file.id}"
-                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-139/notice/' + ${file.filename}}"
+                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-139/free/' + ${file.filename}}"
                                      class="upload-file"
                                      th:alt="${file.fileoriginname}"
                                      th:onclick="fileClick([[${file.id}]])">
-                                <img th:unless="${file.filetype == 'image'}"
+                                <img th:unless="${file.filetype} == 'image'"
                                      th:id="'img' + ${file.id}"
                                      src="/images/defaultFileImg.png"
                                      class="upload-file"
@@ -308,8 +296,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container mt-3 mb-5 w-50 text-center" th:if="${#authentication.principal.member != null
-                                                                            && #authentication.principal.member.id == board.writer_id}">
+                <div class="container mt-3 mb-5 w-50 text-center" th:if="${session.loginMember != null && session.loginMember.id == board.writer_id}">
                     <button type="submit" id="btn-update" class="btn btn-outline-secondary">수정</button>
                     <button type="button" id="btn-delete" class="btn btn-outline-secondary ml-2">삭제</button>
                 </div>
