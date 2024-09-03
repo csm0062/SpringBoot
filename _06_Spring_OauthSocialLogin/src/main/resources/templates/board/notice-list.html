@@ -26,7 +26,7 @@
                const makeImg = (file) => {
                    if(typeof file != 'undefined' && file.filetype === 'image') {
                        return `<img class="bd-placeholder-img card-img-top" width="100%" height="180"
-                                src="https://kr.object.ncloudstorage.com/bitcamp-139/notice/${file.filename}"
+                                src="https://kr.object.ncloudstorage.com/bitcamp-57/notice/${file.filename}"
                                 alt="${file.fileoriginname}">`;
                    }
 
@@ -100,7 +100,7 @@
                 <img class="bd-placeholder-img card-img-top" width="100%" height="180"
                      th:if="${!#lists.isEmpty(notice.boardFileDtoList)
                                 && notice.boardFileDtoList[0].filetype == 'image'}"
-                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-139/notice/' + ${notice.boardFileDtoList[0].filename}}"
+                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-57/notice/' + ${notice.boardFileDtoList[0].filename}}"
                      th:alt="${notice.boardFileDtoList[0].fileoriginname}">
                 <svg th:unless="${!#lists.isEmpty(notice.boardFileDtoList)
                                 && notice.boardFileDtoList[0].filetype == 'image'}"

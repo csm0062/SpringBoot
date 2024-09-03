@@ -36,9 +36,8 @@ public class FreeServiceImpl implements BoardService {
     @Override
     public BoardDto post(BoardDto boardDto, MultipartFile[] uploadFiles) {
 
-//        Member member = memberRepository.findByNickname(boardDto.getNickname());
         Member member = memberRepository.findByNickname(boardDto.getNickname())
-                .orElseThrow(() -> new RuntimeException("member not Exist"));
+                .orElseThrow(() -> new RuntimeException("member not exist"));
 
         boardDto.setRegdate(LocalDateTime.now());
         boardDto.setModdate(LocalDateTime.now());
@@ -73,7 +72,7 @@ public class FreeServiceImpl implements BoardService {
 
 //        if(searchMap.get("searchKeyword") != null) {
 //            if(searchMap.get("searchCondition").toLowerCase().equals("all")) {
-//                freeBoardPage = freeBoardRepository.findBysearchKeyword(
+//                freeBoardPage = freeBoardRepository.findBySearchKeyword(
 //                        pageable, searchMap.get("searchKeyword")
 //                );
 //            } else if(searchMap.get("searchCondition").toLowerCase().equals("title")) {
@@ -169,6 +168,9 @@ public class FreeServiceImpl implements BoardService {
 //            }
 //        });
 
+//        FreeBoard board = boardDto.toFreeBoardEntity(
+//                memberRepository.findById(boardDto.getWriter_id()).orElseThrow());
+
         FreeBoard freeBoard = freeBoardRepository.findById(boardDto.getId()).orElseThrow(
                 () -> new RuntimeException("board not exist")
         );
@@ -206,11 +208,12 @@ public class FreeServiceImpl implements BoardService {
     public void remove(Long id) {
         List<FreeBoardFile> freeBoardFileList =
                 freeBoardRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("board not exist")
-        ).getBoardFileList();
+                        () -> new RuntimeException("board not exist")
+                ).getBoardFileList();
 
         freeBoardFileList.forEach(freeBoardFile ->
                 fileUtils.deleteFile("free/", freeBoardFile.getFilename()));
+
         freeBoardRepository.deleteById(id);
     }
 

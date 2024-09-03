@@ -3,6 +3,7 @@ package com.bit.springboard.repository.impl;
 import com.bit.springboard.entity.FreeBoard;
 import com.bit.springboard.repository.FreeBoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -44,12 +45,9 @@ public class FreeBoardRepositoryCustomImpl implements FreeBoardRepositoryCustom 
                 .selectFrom(freeBoard)
                 .where(freeBoard.id.eq(id))
                 .fetchOne();
+        
 
-//        if(searchNotice == null)
-//            return Optional.empty();
-//
-//        return Optional.of(searchNotice);
-        return Optional.ofNullable((searchFreeBoard));
+        return Optional.ofNullable(searchFreeBoard);
     }
 
     public BooleanBuilder searchCodition(Map<String, String> searchMap) {

@@ -1,6 +1,7 @@
 package com.bit.springboard.config;
 
 import com.bit.springboard.handler.LoginFailureHandler;
+import com.bit.springboard.oauth.OAuth2UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final LoginFailureHandler loginFailureHandler;
+    // loadUser를 실행시킬 서비스 클래스
+    private final OAuth2UserServiceImpl oAuth2UserService;
+
     // 비밀번호 암호화 객체를 Bean 객체로 등록
     // 비밀번호 암호화 객체의 역할은 로그인할 때 입력된 암호와 DB에 저장되어 있는 암호화된 비밀번호가
     // 일치하는 지 비교. 비밀번호 암호화 객체에 matches메소드(암호화되지 않은 비밀번호, 암호화된 비밀번호)
@@ -69,6 +73,19 @@ public class SecurityConfiguration {
                     formLogin.failureHandler(loginFailureHandler);
                     // 로그인 성공시 리다이렉트할 요청 주소 지정
                     formLogin.defaultSuccessUrl("/");
+                })
+                // OAuth2 기반 로그인 처리
+                .oauth2Login((oath2Login) -> {
+                    oath2Login.loginPage("/member/login");
+                    // 자원서버로부터 전달받은 사용자 정보를 처리할 서비스를 지정할 수 있다.
+                    // 기본적으로 DefaultOAuth2UserService 클래스가 제공되어서
+                    // DefaultOAuth2UserService 클래스의 loadUser 메소드가 동작하도록 설정되어 있는데
+                    // 커스마이징하려면 DefaultOAuth2UserService 클래스를 상속받아서
+                    // 오버라이드한 loadUser 메소드를 구현하고 SecurityConfiguration 클래스의
+                    // oauth2Login 부분에 해당 클래스를 매핑한다.
+                    oath2Login.userInfoEndpoint(userInfoEndpointConfig -> {
+                        userInfoEndpointConfig.userService(oAuth2UserService);
+                    });
                 })
                 // 로그아웃 처리
                 .logout((logout) -> {

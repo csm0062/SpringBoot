@@ -275,7 +275,7 @@
                                        id="filecnt" name="filecnt" th:value="${fileStat.count}">
                                 <img th:if="${file.filetype} == 'image'"
                                      th:id="'img' + ${file.id}"
-                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-139/free/' + ${file.filename}}"
+                                     th:src="@{'https://kr.object.ncloudstorage.com/bitcamp-57/free/' + ${file.filename}}"
                                      class="upload-file"
                                      th:alt="${file.fileoriginname}"
                                      th:onclick="fileClick([[${file.id}]])">
@@ -296,7 +296,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="container mt-3 mb-5 w-50 text-center" th:if="${session.loginMember != null && session.loginMember.id == board.writer_id}">
+                <div class="container mt-3 mb-5 w-50 text-center" th:if="${#authentication.principal.member != null && #authentication.principal.member.id == board.writer_id}">
                     <button type="submit" id="btn-update" class="btn btn-outline-secondary">수정</button>
                     <button type="button" id="btn-delete" class="btn btn-outline-secondary ml-2">삭제</button>
                 </div>

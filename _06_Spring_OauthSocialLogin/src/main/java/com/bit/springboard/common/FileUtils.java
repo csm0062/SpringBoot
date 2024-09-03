@@ -47,7 +47,7 @@ public class FileUtils {
     }
 
     public BoardFileDto parserFileInfo(MultipartFile multipartFile, String directory) {
-        String bucketName = "bitcamp-139";
+        String bucketName = "bitcamp-57";
 
         BoardFileDto boardFileDto = new BoardFileDto();
 
@@ -106,7 +106,7 @@ public class FileUtils {
     }
 
     public void deleteFile(String directory, String fileName) {
-        String bucketName = "bitcamp-139";
+        String bucketName = "bitcamp-57";
 
         s3.deleteObject(new DeleteObjectRequest(bucketName, directory + fileName));
     }
