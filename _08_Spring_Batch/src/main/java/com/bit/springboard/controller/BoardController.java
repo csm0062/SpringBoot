@@ -208,6 +208,8 @@ public class BoardController {
             boardService = applicationContext.getBean("noticeServiceImpl", BoardService.class);
         }
 
+
+        
         try {
             boardService.remove(id);
 
