@@ -209,7 +209,7 @@ public class BoardController {
         }
 
 
-        
+
         try {
             boardService.remove(id);
 
